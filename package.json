@@ -1,0 +1,44 @@
+{
+  "name": "agricola-be-editor",
+  "version": "1.0.0",
+  "description": "Editor del logo Agrícola BE (offline)",
+  "main": "main.js",
+  "author": "Daniel Garcia Rojas (DGRcodex)",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron-forge start",
+    "make": "electron-forge make",
+    "package": "electron-forge package",
+    "make:mac:arm64": "electron-forge make --platform=darwin --arch=arm64",
+    "make:mac:x64": "electron-forge make --platform=darwin --arch=x64",
+    "make:win": "electron-forge make --platform=win32 --arch=x64"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.4.2",
+    "@electron-forge/maker-dmg": "^6.4.2",
+    "@electron-forge/maker-squirrel": "^6.4.2",
+    "@electron-forge/maker-zip": "^6.4.2",
+    "electron": "^31.7.7"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "assets/icon"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-dmg",
+          "config": { "format": "ULFO" }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": ["darwin"]
+        },
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": { "name": "AgricolaBEEditor" }
+        }
+      ]
+    }
+  }
+}

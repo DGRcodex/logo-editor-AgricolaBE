@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Agrícola BE — Editor (UX centrado)</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:wght@400..900&family=Montserrat:wght@100..900&family=Roboto+Slab:wght@100..900&family=Lora:wght@100..900&family=Oswald:wght@200..700&family=Poppins:wght@100..900&family=Raleway:wght@100..900&family=Source+Serif+Pro:wght@200..900&family=Work+Sans:wght@100..900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./app.css" />
+
+
+</head>
+<body>
+
+<!-- Botón flotante para ocultar/mostrar paneles -->
+<button id="togglePanels" class="floating-btn" title="Ocultar/mostrar paneles (Tab)">Ocultar paneles</button>
+
+<!-- CONTROLES IZQUIERDA (2 columnas) -->
+<aside id="controls-left" class="side">
+  <!-- === Texto superior === -->
+  <div class="card">
+    <h2>Texto superior</h2>
+    <div class="row"><label>Contenido:</label><input id="topText" value="AGRÍCOLA BE"/></div>
+    <div class="row"><label>Mayúsculas:</label><input type="checkbox" id="topUpper" checked /></div>
+    <div class="row"><label>Fuente:</label>
+      <select id="topFont">
+        <option value="Inter, sans-serif">Inter</option>
+        <option value="Playfair Display, serif">Playfair Display</option>
+        <option value="Montserrat, sans-serif">Montserrat</option>
+        <option value="Roboto Slab, serif">Roboto Slab</option>
+        <option value="Lora, serif">Lora</option>
+        <option value="Oswald, sans-serif">Oswald</option>
+        <option value="Poppins, sans-serif">Poppins</option>
+        <option value="Raleway, sans-serif">Raleway</option>
+        <option value="Source Serif Pro, serif">Source Serif Pro</option>
+        <option value="Work Sans, sans-serif">Work Sans</option>
+      </select>
+    </div>
+    <div class="row"><label>Δ Tamaño fuente:</label><input id="topFontSizeDelta" type="range" min="-200" max="300" value="0"/><span id="topFontSizeVal"></span></div>
+    <div class="row"><label>Δ Letter spacing:</label><input id="topLetterDelta" type="range" min="-20" max="60" value="0"/><span id="topLetterVal"></span></div>
+    <div class="row"><label>Δ Peso (wght):</label><input id="topWeightDelta" type="range" min="-600" max="1100" value="0"/><span id="topWeightVal"></span></div>
+    <div class="row"><label>Δ Escala X (%):</label><input id="topScaleXDelta" type="range" min="-80" max="200" value="0"/><span id="topScaleXVal"></span></div>
+    <div class="row"><label>Δ Escala Y (%):</label><input id="topScaleYDelta" type="range" min="-80" max="200" value="0"/><span id="topScaleYVal"></span></div>
+    <div class="row"><label>Δ Inclinación (°):</label><input id="topSkewDelta" type="range" min="-40" max="40" value="0"/><span id="topSkewVal"></span></div>
+    <div class="row"><label>Color:</label><input id="topColor" value="#234b3f"/></div>
+    <div class="row"><label>Δ Radio arco:</label><input id="topRadiusDelta" type="range" min="-300" max="300" value="0"/><span id="topRadiusVal"></span></div>
+    <div class="row"><label>Δ Ángulo inicio (°):</label><input id="topStartDelta" type="range" min="-360" max="360" value="0"/><span id="topStartVal"></span></div>
+    <div class="row"><label>Δ Apertura arco (°):</label><input id="topSpanDelta" type="range" min="-160" max="140" value="0"/><span id="topSpanVal"></span></div>
+    <div class="row"><label>Δ Offset a lo largo (%):</label><input id="topOffsetDelta" type="range" min="-50" max="50" value="0"/><span id="topOffsetVal"></span></div>
+    <div class="row"><label>Alineación:</label>
+      <select id="topAnchor">
+        <option value="start">Izquierda</option>
+        <option value="middle" selected>Centro</option>
+        <option value="end">Derecha</option>
+      </select>
+    </div>
+    <div class="row"><label>Δ Desplazamiento X:</label><input id="topShiftXDelta" type="range" min="-400" max="400" value="0"/><span id="topShiftXVal"></span></div>
+    <div class="row"><label>Δ Desplazamiento Y:</label><input id="topShiftYDelta" type="range" min="-400" max="400" value="0"/><span id="topShiftYVal"></span></div>
+    <div class="row"><button id="flipTop" class="btn">Invertir orientación</button></div>
+  </div>
+
+  <!-- === Texto inferior === -->
+  <div class="card">
+    <h2>Texto inferior</h2>
+    <div class="row"><label>Contenido:</label><input id="bottomText" value="DESDE LA TIERRA"/></div>
+    <div class="row"><label>Mayúsculas:</label><input type="checkbox" id="bottomUpper" checked /></div>
+    <div class="row"><label>Fuente:</label>
+      <select id="bottomFont">
+        <option value="Inter, sans-serif">Inter</option>
+        <option value="Playfair Display, serif">Playfair Display</option>
+        <option value="Montserrat, sans-serif">Montserrat</option>
+        <option value="Roboto Slab, serif">Roboto Slab</option>
+        <option value="Lora, serif">Lora</option>
+        <option value="Oswald, sans-serif">Oswald</option>
+        <option value="Poppins, sans-serif">Poppins</option>
+        <option value="Raleway, sans-serif">Raleway</option>
+        <option value="Source Serif Pro, serif">Source Serif Pro</option>
+        <option value="Work Sans, sans-serif">Work Sans</option>
+      </select>
+    </div>
+    <div class="row"><label>Δ Tamaño fuente:</label><input id="bottomFontSizeDelta" type="range" min="-200" max="300" value="0"/><span id="bottomFontSizeVal"></span></div>
+    <div class="row"><label>Δ Letter spacing:</label><input id="bottomLetterDelta" type="range" min="-20" max="60" value="0"/><span id="bottomLetterVal"></span></div>
+    <div class="row"><label>Δ Peso (wght):</label><input id="bottomWeightDelta" type="range" min="-600" max="1100" value="0"/><span id="bottomWeightVal"></span></div>
+    <div class="row"><label>Δ Escala X (%):</label><input id="bottomScaleXDelta" type="range" min="-80" max="200" value="0"/><span id="bottomScaleXVal"></span></div>
+    <div class="row"><label>Δ Escala Y (%):</label><input id="bottomScaleYDelta" type="range" min="-80" max="200" value="0"/><span id="bottomScaleYVal"></span></div>
+    <div class="row"><label>Δ Inclinación (°):</label><input id="bottomSkewDelta" type="range" min="-40" max="40" value="0"/><span id="bottomSkewVal"></span></div>
+    <div class="row"><label>Color:</label><input id="bottomColor" value="#234b3f"/></div>
+    <div class="row"><label>Δ Radio arco:</label><input id="bottomRadiusDelta" type="range" min="-300" max="300" value="0"/><span id="bottomRadiusVal"></span></div>
+    <div class="row"><label>Δ Ángulo inicio (°):</label><input id="bottomStartDelta" type="range" min="-360" max="360" value="0"/><span id="bottomStartVal"></span></div>
+    <div class="row"><label>Δ Apertura arco (°):</label><input id="bottomSpanDelta" type="range" min="-160" max="140" value="0"/><span id="bottomSpanVal"></span></div>
+    <div class="row"><label>Δ Offset a lo largo (%):</label><input id="bottomOffsetDelta" type="range" min="-50" max="50" value="0"/><span id="bottomOffsetVal"></span></div>
+    <div class="row"><label>Alineación:</label>
+      <select id="bottomAnchor">
+        <option value="start">Izquierda</option>
+        <option value="middle" selected>Centro</option>
+        <option value="end">Derecha</option>
+      </select>
+    </div>
+    <div class="row"><label>Δ Desplazamiento X:</label><input id="bottomShiftXDelta" type="range" min="-400" max="400" value="0"/><span id="bottomShiftXVal"></span></div>
+    <div class="row"><label>Δ Desplazamiento Y:</label><input id="bottomShiftYDelta" type="range" min="-400" max="400" value="0"/><span id="bottomShiftYVal"></span></div>
+    <div class="row"><button id="flipBottom" class="btn">Invertir orientación</button></div>
+  </div>
+</aside>
+
+<!-- CANVAS CENTRAL -->
+<main id="canvas">
+  <div id="svgwrap">
+    <svg id="logo" width="512" height="512" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+      <defs><path id="arcTop" d=""/><path id="arcBottom" d=""/></defs>
+      <circle id="ringOuter" cx="512" cy="512" r="445" fill="none" stroke="#234b3f" stroke-width="19"/>
+      <circle id="ringInner" cx="512" cy="512" r="282" fill="none" stroke="#234b3f" stroke-width="12"/>
+      <circle id="dotL" cx="68" cy="489" r="18" fill="#234b3f"/>
+      <circle id="dotR" cx="844" cy="512" r="9" fill="#234b3f"/>
+      <text id="txtTop" font-size="100" font-weight="700" letter-spacing="10" fill="#234b3f" text-anchor="middle">
+        <textPath id="tpTop" href="#arcTop" startOffset="38%">AGRÍCOLA BE</textPath>
+      </text>
+      <text id="txtBottom" font-size="100" font-weight="700" letter-spacing="10" fill="#234b3f" text-anchor="middle">
+        <textPath id="tpBottom" href="#arcBottom" startOffset="53%">DESDE LA TIERRA</textPath>
+      </text>
+      <g id="mandala" fill="none" stroke="#234b3f" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"></g>
+    </svg>
+  </div>
+</main>
+
+<!-- CONTROLES DERECHA (2 columnas) -->
+<aside id="controls-right" class="side">
+  <!-- === Anillos y puntos === -->
+  <div class="card">
+    <h2>Anillos y puntos</h2>
+    <div class="row"><label>Δ Radio anillo exterior:</label><input id="ringOuterRDelta" type="range" min="-300" max="300" value="0"/><span id="ringOuterRVal"></span></div>
+    <div class="row"><label>Δ Grosor anillo exterior:</label><input id="ringOuterWDelta" type="range" min="-16" max="40" value="0"/><span id="ringOuterWVal"></span></div>
+    <div class="row"><label>Δ Radio anillo interior:</label><input id="ringInnerRDelta" type="range" min="-200" max="300" value="0"/><span id="ringInnerRVal"></span></div>
+    <div class="row"><label>Δ Grosor anillo interior:</label><input id="ringInnerWDelta" type="range" min="-12" max="40" value="0"/><span id="ringInnerWVal"></span></div>
+
+    <div class="subhead">Punto izquierdo</div>
+    <div class="row"><label>Usar coord. X/Y:</label><input type="checkbox" id="dotLUseXY"/></div>
+    <div class="row"><label>Δ Ángulo (°):</label><input id="dotLADelta" type="range" min="-360" max="360" value="0"/><span id="dotLAVal"></span></div>
+    <div class="row"><label>Δ Órbita:</label><input id="dotLOrbitDelta" type="range" min="-240" max="560" value="0"/><span id="dotLOrbitVal"></span></div>
+    <div class="row"><label>Δ X:</label><input id="dotLXDelta" type="range" min="-512" max="512" value="0"/><span id="dotLXVal"></span></div>
+    <div class="row"><label>Δ Y:</label><input id="dotLYDelta" type="range" min="-512" max="512" value="0"/><span id="dotLYVal"></span></div>
+    <div class="row"><label>Δ Tamaño:</label><input id="dotLRDelta" type="range" min="-8" max="40" value="0"/><span id="dotLRVal"></span></div>
+
+    <div class="subhead">Punto derecho</div>
+    <div class="row"><label>Usar coord. X/Y:</label><input type="checkbox" id="dotRUseXY"/></div>
+    <div class="row"><label>Δ Ángulo (°):</label><input id="dotRADelta" type="range" min="-360" max="360" value="0"/><span id="dotRAVal"></span></div>
+    <div class="row"><label>Δ Órbita:</label><input id="dotROrbitDelta" type="range" min="-240" max="560" value="0"/><span id="dotROrbitVal"></span></div>
+    <div class="row"><label>Δ X:</label><input id="dotRXDelta" type="range" min="-512" max="512" value="0"/><span id="dotRXVal"></span></div>
+    <div class="row"><label>Δ Y:</label><input id="dotRYDelta" type="range" min="-512" max="512" value="0"/><span id="dotRYVal"></span></div>
+    <div class="row"><label>Δ Tamaño:</label><input id="dotRRDelta" type="range" min="-8" max="40" value="0"/><span id="dotRRVal"></span></div>
+  </div>
+
+  <!-- === Mandala === -->
+  <div class="card">
+    <h2>Mandala</h2>
+    <div class="row"><label>Δ Pétalos:</label><input id="petalsDelta" type="range" min="-10" max="48" value="0"/><span id="petalsVal"></span></div>
+    <div class="row"><label>Δ Curvatura (0–1):</label><input id="curvinessDelta" type="range" min="-65" max="35" value="0"/><span id="curvVal"></span></div>
+    <div class="row"><label>Δ Largo pétalo:</label><input id="lengthDelta" type="range" min="-100" max="480" value="0"/><span id="lenVal"></span></div>
+    <div class="row"><label>Δ Ancho pétalo:</label><input id="widthDelta" type="range" min="-60" max="520" value="0"/><span id="widVal"></span></div>
+    <div class="row"><label>Δ Grosor trazo:</label><input id="mandalaStrokeDelta" type="range" min="-6" max="32" value="0"/><span id="mandalaStrokeVal"></span></div>
+    <div class="row"><label>Δ Escala (%):</label><input id="mandalaScaleDelta" type="range" min="-50" max="300" value="0"/><span id="mandalaScaleVal"></span></div>
+    <div class="row"><label>Δ Rotación (°):</label><input id="mandalaRotDelta" type="range" min="0" max="360" value="0"/><span id="mandalaRotVal"></span></div>
+    <div class="row"><label>Δ Centro (radio):</label><input id="centerDotDelta" type="range" min="-6" max="110" value="0"/><span id="centerDotVal"></span></div>
+    <div class="row grid2">
+      <button id="variantSoft" class="btn">Mandala suave</button>
+      <button id="variantElong" class="btn">Pétalos alargados</button>
+      <button id="variantMinimal" class="btn">Minimal</button>
+      <button id="downloadSVG" class="btn">Descargar SVG</button>
+    </div>
+  </div>
+</aside>
+
+<!-- === DOCK: el ÚNICO panel junto al logo, debajo del canvas === -->
+<section id="dock">
+  <div class="card dock-card">
+    <h2>Exportar / Sesión</h2>
+    <div class="row"><label>Tamaño PNG (px):</label><input id="pngSize" type="range" min="512" max="8192" value="2048"/><span id="pngSizeVal">2048</span></div>
+    <div class="row"><label>Padding (px):</label><input id="pngPad" type="range" min="0" max="400" value="40"/><span id="pngPadVal">40</span></div>
+    <div class="row"><label>Auto-recortar bordes:</label><input type="checkbox" id="pngTrim" checked /></div>
+    <div class="row grid2">
+      <button id="exportPNG" class="btn">Exportar PNG</button>
+      <button id="saveState" class="btn">Guardar</button>
+      <button id="loadState" class="btn">Cargar</button>
+      <button id="resetZero" class="btn">Reset a 0</button>
+    </div>
+    <small>PNG cuadrado, fondo 100% transparente, con auto-recorte.</small>
+  </div>
+</section>
+
+<script src="./app.js"></script>
+
+<footer id="about-banner">
+  <div class="about-links">
+    <a href="https://github.com/dgrcodex" target="_blank" class="about-item">
+      <span class="icon">✍️</span> Creado por <strong>DGRcodex</strong>
+    </a>
+    <a href="https://sambalab.pro" target="_blank" class="about-item">
+      <span class="icon">🚀</span> Desde <strong>Sambalab Studios</strong>
+    </a>
+    <a href="https://agricolabe.com" target="_blank" class="about-item">
+      <span class="icon">🌿</span> Acerca de <strong>Agrícola BE</strong>
+    </a>
+  </div>
+</footer>
+
+
+</body>
+</html>

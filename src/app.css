@@ -1,0 +1,274 @@
+:root {
+    --green: #234b3f;
+    --bg: #f7f7f8;
+    --panel-bg: #fff;
+    --border: #e7e7ea;
+    --radius: 12px;
+    --text: #111;
+    --muted: #666;
+}
+
+/* ====== LAYOUT GENERAL (2 filas: contenido + dock) ====================== */
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--text);
+    display: grid;
+    grid-template-columns:
+        clamp(480px, 36vw, 560px) 1fr clamp(480px, 36vw, 560px);
+    grid-template-rows: 1fr auto;
+    /* fila 2: dock */
+    grid-template-areas:
+        "left center right"
+        "left dock   right";
+    background: var(--bg);
+}
+
+/* Canvas central */
+#canvas {
+    grid-area: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    padding: 20px;
+}
+
+#svgwrap {
+    width: min(88vw, 1040px);
+    aspect-ratio: 1/1;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, .04);
+}
+
+#logo {
+    width: 94%;
+    height: auto;
+}
+
+/* Paneles laterales (2 columnas de tarjetas) */
+.side {
+    background: var(--bg);
+    overflow-y: auto;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+    gap: 12px;
+    align-content: start;
+}
+
+#controls-left {
+    grid-area: left;
+}
+
+#controls-right {
+    grid-area: right;
+}
+
+/* Dock inferior (solo la tarjeta de exportar) */
+#dock {
+    grid-area: dock;
+    display: flex;
+    justify-content: center;
+    padding: 14px 20px 22px;
+}
+
+.dock-card {
+    width: min(88vw, 1040px);
+}
+
+/* Tarjetas y campos */
+.card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px;
+}
+
+h2 {
+    margin: 4px 0 10px;
+    font-size: 15px;
+}
+
+.subhead {
+    margin: 10px 0 6px;
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+label {
+    min-width: 150px;
+    font-size: 12px;
+    color: #333;
+}
+
+input[type="text"],
+select {
+    width: 220px;
+    padding: 6px 8px;
+    font-size: 13px;
+}
+
+input[type="checkbox"] {
+    transform: scale(.9);
+}
+
+input[type="range"] {
+    width: 220px;
+    transform: scaleY(.85);
+    accent-color: #3aa25c;
+}
+
+.row span {
+    font-size: 12px;
+    color: #333;
+    min-width: 40px;
+    text-align: right;
+}
+
+.grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn:hover {
+    background: #f3f3f5;
+}
+
+/* Botón flotante */
+.floating-btn {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 1000;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+/* Diálogo ayuda (si lo usas) */
+dialog#helpDlg {
+    width: min(880px, 96vw);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.help-head {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.help-body {
+    padding: 12px 14px;
+}
+
+/* ====== Ocultar paneles (modo presentación) ============================ */
+body.panels-hidden {
+    grid-template-columns: 0 1fr 0;
+    /* colapsa lados */
+}
+
+body.panels-hidden #controls-left,
+body.panels-hidden #controls-right {
+    display: none;
+}
+
+body.panels-hidden #svgwrap {
+    width: min(92vw, 1200px);
+}
+
+/* ====== Breakpoints ===================================================== */
+@media (max-width: 1600px) {
+    body {
+        grid-template-columns: 380px 1fr 380px;
+    }
+
+    .side {
+        grid-template-columns: 1fr;
+    }
+
+    /* vuelve a 1 columna por lado */
+}
+
+@media (max-width: 1200px) {
+    body {
+        grid-template-columns: 320px 1fr 320px;
+    }
+
+    #svgwrap {
+        width: min(92vw, 860px);
+    }
+
+    .grid2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ====== Banner de autoría ====================================== */
+#about-banner {
+    grid-column: 1 / -1;
+    /* que abarque todo el ancho */
+    background: var(--green);
+    color: #fff;
+    text-align: center;
+    padding: 12px 0;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.15);
+}
+
+#about-banner .about-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+#about-banner .about-item {
+    color: #a7e6c2;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+#about-banner .about-item:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+#about-banner .icon {
+    margin-right: 6px;
+    font-size: 16px;
+}
