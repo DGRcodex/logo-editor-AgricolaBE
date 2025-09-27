@@ -219,9 +219,8 @@ body.panels-hidden #svgwrap {
 
     .side {
         grid-template-columns: 1fr;
+        /* vuelve a 1 columna por lado */
     }
-
-    /* vuelve a 1 columna por lado */
 }
 
 @media (max-width: 1200px) {
@@ -272,3 +271,102 @@ body.panels-hidden #svgwrap {
     margin-right: 6px;
     font-size: 16px;
 }
+
+/* ======================================================================= */
+/* === Escala global (Electron / Chromium) =============================== */
+/* Pegado al FINAL del archivo. NO tocar HTML ni JS.                       */
+/* Mantiene iMac 27" en 1.0 y compacta en notebooks de forma progresiva.   */
+/* ======================================================================= */
+
+:root {
+    --ui-zoom: 1;
+}
+
+body {
+    zoom: var(--ui-zoom);
+}
+
+/* --- Por ANCHO de ventana --- */
+@media (max-width: 2000px) {
+    :root {
+        --ui-zoom: 0.92;
+    }
+}
+
+/* 2K/ultrawide moderado */
+@media (max-width: 1700px) {
+    :root {
+        --ui-zoom: 0.86;
+    }
+}
+
+/* 1920/1680 */
+@media (max-width: 1600px) {
+    :root {
+        --ui-zoom: 0.82;
+    }
+}
+
+/* acompaña tu breakpoint */
+@media (max-width: 1536px) {
+    :root {
+        --ui-zoom: 0.78;
+    }
+}
+
+/* MBP 16" (1536) */
+@media (max-width: 1440px) {
+    :root {
+        --ui-zoom: 0.74;
+    }
+}
+
+/* 15" típicos */
+@media (max-width: 1366px) {
+    :root {
+        --ui-zoom: 0.70;
+    }
+}
+
+@media (max-width: 1280px) {
+    :root {
+        --ui-zoom: 0.66;
+    }
+}
+
+/* --- Por ALTO de ventana (toma el menor) --- */
+@media (max-height: 1200px) {
+    :root {
+        --ui-zoom: 0.92;
+    }
+}
+
+@media (max-height: 1050px) {
+    :root {
+        --ui-zoom: 0.84;
+    }
+}
+
+@media (max-height: 980px) {
+    :root {
+        --ui-zoom: 0.78;
+    }
+}
+
+@media (max-height: 900px) {
+    :root {
+        --ui-zoom: 0.74;
+    }
+}
+
+@media (max-height: 830px) {
+    :root {
+        --ui-zoom: 0.70;
+    }
+}
+
+/* Nota:
+   - Si en algún portátil aún desborda en vertical, baja levemente el valor
+     de --ui-zoom para ese max-height (por ejemplo 0.72 en 900px).
+   - El zoom de Chromium mantiene buena nitidez en Electron.
+*/
