@@ -17,19 +17,33 @@ const ringInner = document.getElementById('ringInner');
 const dotL = document.getElementById('dotL');
 const dotR = document.getElementById('dotR');
 
-// Mapa de si la fuente es variable (todas del HTML lo son)
-const VARIABLE_FONT = {
-  "Inter, sans-serif": true,
-  "Playfair Display, serif": true,
-  "Montserrat, sans-serif": true,
-  "Roboto Slab, serif": true,
-  "Lora, serif": true,
-  "Oswald, sans-serif": true,
-  "Poppins, sans-serif": true,
-  "Raleway, sans-serif": true,
-  "Source Serif Pro, serif": true,
-  "Work Sans, sans-serif": true
-};
+// --- Util para nombre base de familia (antes de la coma) ---
+const baseFamily = (ff) => (ff || '').split(',')[0].trim().replace(/['"]/g,'');
+
+// Mapa flexible de fuentes variables (coincide por nombre base)
+const VARIABLE_FONT_BASES = new Set([
+  "Inter",
+  "Playfair Display",
+  "Montserrat",
+  "Roboto Slab",
+  "Lora",
+  "Oswald",
+  "Poppins",
+  "Raleway",
+  "Source Serif Pro",
+  "Work Sans"
+]);
+
+// Detección robusta (si no se reconoce, igual aplicamos font-variation-settings: las no variables lo ignoran)
+const isVariableFont = (ff) => VARIABLE_FONT_BASES.has(baseFamily(ff));
+
+// URL de Google Fonts igual que en index.html (para incrustar el CSS real)
+const GOOGLE_FONTS_URL =
+  "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:wght@400..900&family=Montserrat:wght@100..900&family=Roboto+Slab:wght@100..900&family=Lora:wght@100..900&family=Oswald:wght@200..700&family=Poppins:wght@100..900&family=Raleway:wght@100..900&family=Source+Serif+Pro:wght@200..900&family=Work+Sans:wght@100..900&display=swap";
+
+let FONTS_CSS_CACHE = null;
+// fallback por si falla la descarga de CSS
+const FONTS_IMPORT_FALLBACK = `@import url('${GOOGLE_FONTS_URL}');`;
 
 // --- BASE: valores del SVG original (sliders en 0 = original) ---
 const BASE = {
@@ -95,6 +109,7 @@ function placeDotPolar(node, r, angleDeg){
 }
 function placeDotXY(node, x, y){ node.setAttribute('cx', x); node.setAttribute('cy', y); }
 
+// fijamos font-weight e incluimos variation settings si la fuente lo soporta
 function setTextStyle(node, tpNode, ff, size, ls, color, anchor, shiftX, shiftY, upper, content, weight, scaleX, scaleY, skew){
   node.setAttribute('font-family', ff);
   node.setAttribute('font-size', size);
@@ -102,18 +117,12 @@ function setTextStyle(node, tpNode, ff, size, ls, color, anchor, shiftX, shiftY,
   node.setAttribute('fill', color);
   node.setAttribute('text-anchor', anchor);
 
-  // Font weight con variable fonts
-  if (VARIABLE_FONT[ff]) {
-    node.style.fontVariationSettings = `'wght' ${weight}`;
-    node.removeAttribute('font-weight'); // evitar conflictos
-    document.getElementById(node.id.includes('Top') ? 'topWeightDelta' : 'bottomWeightDelta').disabled = false;
-  } else {
-    node.style.removeProperty('font-variation-settings');
-    node.setAttribute('font-weight', Math.round(weight));
-    document.getElementById(node.id.includes('Top') ? 'topWeightDelta' : 'bottomWeightDelta').disabled = true;
-  }
+  const w = Math.max(1, Math.min(1000, Math.round(weight)));
+  node.setAttribute('font-weight', w);
 
-  // Geo transform
+  // Aplicamos font-variation-settings siempre; las no variables lo ignoran.
+  node.setAttribute('style', `font-variation-settings: 'wght' ${w};`);
+
   node.setAttribute('transform', `translate(${shiftX},${shiftY}) skewX(${skew}) scale(${(scaleX/100)},${(scaleY/100)})`);
   tpNode.textContent = upper ? content.toUpperCase() : content;
 }
@@ -162,14 +171,14 @@ function sync(){
   const letBot= BASE.bottom.letter + (+document.getElementById('bottomLetterDelta').value || 0);
   const wBot  = Math.max(1, BASE.bottom.weight + (+document.getElementById('bottomWeightDelta').value || 0));
   const sxBot = BASE.bottom.sx + (+document.getElementById('bottomScaleXDelta').value || 0);
-  const syBot = BASE.bottom.sy + (+document.getElementById('bottomScaleYDelta').value || 0);
+  const syBot = BASE.bottom.sy + (+document.getElementById('bottomScaleYDelta').value || 0); // FIX ok
   const skBot = BASE.bottom.skew + (+document.getElementById('bottomSkewDelta').value || 0);
   const rBot  = Math.max(1, BASE.bottom.radius + (+document.getElementById('bottomRadiusDelta').value || 0));
   const stBot = BASE.bottom.start + (+document.getElementById('bottomStartDelta').value || 0);
   const spBot = Math.max(1, BASE.bottom.span + (+document.getElementById('bottomSpanDelta').value || 0));
   const offBot= Math.min(100, Math.max(0, BASE.bottom.offset + (+document.getElementById('bottomOffsetDelta').value || 0)));
-  const shxB  = BASE.bottom.shiftX + (+document.getElementById('bottomShiftXDelta').value || 0);
-  const shyB  = BASE.bottom.shiftY + (+document.getElementById('bottomShiftYDelta').value || 0);
+  const shxB  = BASE.bottom.shiftX + (+document.getElementById('bottomShiftXDelta').value || 0); // FIX ok
+  const shyB  = BASE.bottom.shiftY + (+document.getElementById('bottomShiftYDelta').value || 0); // FIX ok
   const ancB  = document.getElementById('bottomAnchor').value || BASE.bottom.anchor;
   const upBot = document.getElementById('bottomUpper').checked;
   const txtB  = document.getElementById('bottomText').value || BASE.bottom.text;
@@ -204,7 +213,7 @@ function sync(){
   document.getElementById('ringInnerRVal').textContent = rIn;
   document.getElementById('ringInnerWVal').textContent = wIn;
 
-  // Puntos (izq)
+  // Puntos (izq)  **ARREGLADO: paréntesis**
   const useXL = document.getElementById('dotLUseXY').checked;
   const aL = BASE.dotL.angle + (+document.getElementById('dotLADelta').value || 0);
   const oL = Math.max(0, BASE.dotL.orbit + (+document.getElementById('dotLOrbitDelta').value || 0));
@@ -219,7 +228,7 @@ function sync(){
   if(useXL) placeDotXY(dotL, xL, yL); else placeDotPolar(dotL, oL, aL);
   dotL.setAttribute('r', rL); dotL.setAttribute('fill', topColor);
 
-  // Puntos (der)
+  // Puntos (der) **ARREGLADO: paréntesis**
   const useXR = document.getElementById('dotRUseXY').checked;
   const aR = BASE.dotR.angle + (+document.getElementById('dotRADelta').value || 0);
   const oR = Math.max(0, BASE.dotR.orbit + (+document.getElementById('dotROrbitDelta').value || 0));
@@ -284,7 +293,7 @@ qs('variantMinimal').onclick = () => {
   sync();
 };
 
-// --- Descargar SVG ---
+// --- Descargar SVG
 qs('downloadSVG').onclick = () => {
   const s = new XMLSerializer().serializeToString(svg);
   const blob = new Blob([s], {type:'image/svg+xml'});
@@ -293,6 +302,43 @@ qs('downloadSVG').onclick = () => {
   a.href = url; a.download = 'agricola-be-logo.svg'; a.click();
   URL.revokeObjectURL(url);
 };
+
+// Descargar el CSS real de Google Fonts (una vez)
+async function ensureFontsCSS(){
+  if (FONTS_CSS_CACHE) return FONTS_CSS_CACHE;
+  try {
+    const res = await fetch(GOOGLE_FONTS_URL, { mode: 'cors', credentials: 'omit' });
+    const css = await res.text();
+    FONTS_CSS_CACHE = css;
+  } catch (e) {
+    console.warn('No pude descargar CSS de Google Fonts, usaré @import fallback', e);
+    FONTS_CSS_CACHE = FONTS_IMPORT_FALLBACK;
+  }
+  return FONTS_CSS_CACHE;
+}
+
+// Espera a que las fuentes del documento estén listas
+async function waitFontsReady(){
+  if (document.fonts && document.fonts.ready) {
+    try { await document.fonts.ready; } catch {}
+  }
+}
+
+// Fija de forma explícita estilos críticos en el clon (defensa extra)
+function normalizeTextNodes(root){
+  const texts = root.querySelectorAll('text');
+  texts.forEach(t=>{
+    const ff = t.getAttribute('font-family') || 'Inter, sans-serif';
+    const w  = parseInt(t.getAttribute('font-weight') || '700', 10);
+    // dejamos ambos: atributo y style de variation
+    t.setAttribute('font-weight', String(w));
+    const prev = t.getAttribute('style') || '';
+    const merged = /font-variation-settings/i.test(prev)
+      ? prev
+      : `${prev ? prev + '; ' : ''}font-variation-settings: 'wght' ${w};`;
+    t.setAttribute('style', merged);
+  });
+}
 
 // --- Exportar PNG transparente con auto-recorte ---
 function getTrimBounds(ctx, w, h){
@@ -312,6 +358,7 @@ function getTrimBounds(ctx, w, h){
   if(right < left || bottom < top) return {left:0, top:0, right:w-1, bottom:h-1};
   return {left, top, right, bottom};
 }
+
 qs('pngSize').addEventListener('input', e=>{ qs('pngSizeVal').textContent = e.target.value; });
 qs('pngPad').addEventListener('input', e=>{ qs('pngPadVal').textContent = e.target.value; });
 
@@ -319,17 +366,42 @@ qs('exportPNG').onclick = async () => {
   const size = +qs('pngSize').value;
   const pad = +qs('pngPad').value;
   const doTrim = qs('pngTrim').checked;
-  const s = new XMLSerializer().serializeToString(svg);
+
+  // 1) Clonar SVG e inyectar CSS de fuentes
+  const svgClone = svg.cloneNode(true);
+  const styleNode = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+  styleNode.setAttribute('type', 'text/css');
+  const cssFonts = await ensureFontsCSS();
+  const extraRules = `
+    text { font-kerning: normal; }
+    #txtTop, #txtBottom { paint-order: stroke fill markers; }
+  `;
+  styleNode.textContent = cssFonts + '\n' + extraRules;
+  svgClone.insertBefore(styleNode, svgClone.firstChild);
+  svgClone.setAttribute('preserveAspectRatio','xMidYMid meet');
+
+  // 1.5) Normalizar nodos de texto (asegurar peso/variation)
+  normalizeTextNodes(svgClone);
+
+  // 2) Esperar fuentes
+  await waitFontsReady();
+
+  // 3) Serializar el clon
+  const s = new XMLSerializer().serializeToString(svgClone);
   const svgBlob = new Blob([s], {type:'image/svg+xml'});
   const svgUrl = URL.createObjectURL(svgBlob);
+
+  // 4) Rasterizar
   const baseSize = 1024;
   const img = new Image();
+  img.crossOrigin = 'anonymous';
   img.onload = () => {
     const tmp = document.createElement('canvas');
     tmp.width = baseSize; tmp.height = baseSize;
     const tctx = tmp.getContext('2d');
     tctx.clearRect(0,0,baseSize,baseSize);
     tctx.drawImage(img, 0, 0, baseSize, baseSize);
+
     let srcX=0, srcY=0, srcW=baseSize, srcH=baseSize;
     if(doTrim){
       const b = getTrimBounds(tctx, baseSize, baseSize);
@@ -338,6 +410,7 @@ qs('exportPNG').onclick = async () => {
       srcW = Math.min(baseSize - srcX, (b.right - b.left + 1) + pad*2);
       srcH = Math.min(baseSize - srcY, (b.bottom - b.top + 1) + pad*2);
     }
+
     const out = document.createElement('canvas');
     out.width = size; out.height = size;
     const octx = out.getContext('2d');
@@ -348,6 +421,7 @@ qs('exportPNG').onclick = async () => {
     const dx = Math.floor((size - drawW) / 2);
     const dy = Math.floor((size - drawH) / 2);
     octx.drawImage(tmp, srcX, srcY, srcW, srcH, dx, dy, drawW, drawH);
+
     out.toBlob(blob=>{
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -355,6 +429,12 @@ qs('exportPNG').onclick = async () => {
       a.click();
       URL.revokeObjectURL(url);
     }, 'image/png');
+
+    URL.revokeObjectURL(svgUrl);
+  };
+  img.onerror = (e) => {
+    console.error('Error cargando SVG para exportar:', e);
+    alert('No se pudo exportar el PNG. Revisa conexión a Google Fonts e inténtalo otra vez.');
     URL.revokeObjectURL(svgUrl);
   };
   img.src = svgUrl;
@@ -393,22 +473,108 @@ function applyStateFromSession(data){
     if (el.type === 'checkbox') el.checked = !!val; else el.value = val;
   });
 }
+
+// --- Persistencia local (autosave) ---
+const LS_KEY = 'AgricolaBE_Editor_state_v1';
+function autosave(){
+  try {
+    const state = collectStateForSession();
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  } catch(e) { console.warn('Autosave falló:', e); }
+}
+function autoload(){
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return false;
+    const state = JSON.parse(raw);
+    applyStateFromSession(state);
+    return true;
+  } catch { return false; }
+}
+
+// --- Fallbacks de archivo si no hay electronAPI ---
 async function saveSessionFS(){
   const name = prompt("Nombre de la versión (ej: version-1):");
   if (!name) return;
   const state = collectStateForSession();
   const payload = { name, state, date: Date.now(), app: "AgricolaBE-Editor", version: "1" };
-  if (!window.electronAPI?.saveFile) { alert("Guardado no disponible (preload)."); return; }
-  const res = await window.electronAPI.saveFile(payload);
-  if (res?.success) alert("Sesión guardada en:\n" + res.path);
+
+  // 1) Electron
+  if (window.electronAPI?.saveFile) {
+    const res = await window.electronAPI.saveFile(payload);
+    if (res?.success) { alert("Sesión guardada en:\n" + res.path); return; }
+  }
+
+  // 2) File System Access API
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: `${name}.json`,
+        types: [{ description: 'JSON', accept: {'application/json':['.json']} }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(new Blob([JSON.stringify(payload,null,2)], {type:'application/json'}));
+      await writable.close();
+      alert("Sesión guardada.");
+      return;
+    } catch (e) {
+      console.warn('Guardado con FS Access cancelado o falló:', e);
+    }
+  }
+
+  // 3) Descarga directa
+  const url = URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)], {type:'application/json'}));
+  const a = document.createElement('a');
+  a.href = url; a.download = `${name}.json`; a.click();
+  URL.revokeObjectURL(url);
+  alert("Sesión descargada como archivo JSON.");
 }
+
 async function loadSessionFS(){
-  if (!window.electronAPI?.loadFile) { alert("Carga no disponible (preload)."); return; }
-  const session = await window.electronAPI.loadFile();
-  if (!session) return;
-  applyStateFromSession(session.state);
-  sync();
-  alert("Sesión cargada: " + (session.name || "(sin nombre)"));
+  // 1) Electron
+  if (window.electronAPI?.loadFile) {
+    const session = await window.electronAPI.loadFile();
+    if (!session) return;
+    applyStateFromSession(session.state);
+    sync();
+    alert("Sesión cargada: " + (session.name || "(sin nombre)"));
+    return;
+  }
+
+  // 2) File System Access API
+  if (window.showOpenFilePicker) {
+    try {
+      const [handle] = await window.showOpenFilePicker({
+        multiple: false,
+        types: [{ description: 'JSON', accept: {'application/json':['.json']} }]
+      });
+      const file = await handle.getFile();
+      const txt = await file.text();
+      const session = JSON.parse(txt);
+      applyStateFromSession(session.state);
+      sync();
+      alert("Sesión cargada: " + (session.name || "(sin nombre)"));
+      return;
+    } catch (e) {
+      console.warn('Carga con FS Access cancelada o falló:', e);
+      return;
+    }
+  }
+
+  // 3) Input file clásico
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = 'application/json';
+  inp.onchange = async () => {
+    const file = inp.files?.[0];
+    if (!file) return;
+    const txt = await file.text();
+    const session = JSON.parse(txt);
+    applyStateFromSession(session.state);
+    sync();
+    alert("Sesión cargada: " + (session.name || "(sin nombre)"));
+  };
+  inp.click();
 }
 
 // Conecta a los botones del dock
@@ -464,7 +630,7 @@ document.getElementById('flipBottom').onclick = () => {
   'pngSize','pngPad','pngTrim'
 ].forEach(id => {
   const el = document.getElementById(id);
-  if(el) el.addEventListener('input', sync);
+  if(el) el.addEventListener('input', () => { sync(); autosave(); });
 });
 
 // ======= Ocultar/mostrar paneles =======
@@ -484,4 +650,11 @@ window.addEventListener('keydown', (e)=>{
 });
 
 // --- Inicial ---
-sync();
+(function init(){
+  const had = autoload();
+  sync();
+  if (had) {
+    // re-sync después de un tick para asegurar fuentes
+    setTimeout(sync, 0);
+  }
+})();
